@@ -106,7 +106,7 @@ namespace GMImagePicker
 				Hidden = true
 			};
 			AddSubview (_coverView);
-
+			
 			_selectedButton = new UIButton (UIButtonType.Custom) {
 				Frame = new CGRect(2 * Bounds.Size.Width / 3, 0 * Bounds.Size.Width / 3, Bounds.Size.Width / 3, Bounds.Size.Width / 3),
 				ContentMode = UIViewContentMode.TopRight,
@@ -114,8 +114,16 @@ namespace GMImagePicker
 				Hidden = false,
 				UserInteractionEnabled = false
 			};
+			//progress view for each gridviewcell
+			 ProgressView = new UIProgressView
+            		{
+              			  Hidden = true,
+                		Frame = new CGRect(cellSize/4, cellSize / 2, cellSize / 2, cellSize),
+              
+          		  };
 			_selectedButton.SetImage (null, UIControlState.Normal);
 			_selectedButton.SetImage (UIImage.FromFile ("GMSelected"), UIControlState.Selected);
+			AddSubview(ProgressView);
 			AddSubview (_selectedButton);
 
 			// Note: the views above are created in case this is toggled per cell, on the fly, etc.!
