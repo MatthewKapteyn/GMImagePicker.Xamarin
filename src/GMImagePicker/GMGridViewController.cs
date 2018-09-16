@@ -583,10 +583,64 @@ namespace GMImagePicker
 		{
 			var asset = (PHAsset)AssetsFetchResults[indexPath.Item];
 			var cell = (GMGridViewCell)collectionView.CellForItem(indexPath);
+			
+			//set NetworkAccessAllowed = true , when it is allowed it will download asset from iCloud to device
+			asset.RequestContentEditingInput(new PHContentEditingInputRequestOptions
+           		 {
+              			  NetworkAccessAllowed = true,
+               			  ProgressHandler = (double progress, ref bool stop) => {
+                    
+                  			  stop = false;
 
-			_picker.SelectAsset(asset);
-			_picker.NotifyAssetSelected(asset);
-			ConfigureSelectCellAccessibilityAttributes(cell, true, null);
+                    			DispatchQueue.MainQueue.DispatchSync(() =>
+                   			 {
+                        
+
+                            Console.WriteLine(progress.ToString());
+                            cell.ProgressView.Hidden = false;
+                            cell.ProgressView.Progress = (float)progress;
+                            
+                       			 }
+                        else
+                        {
+                            cell.Selected = false; 
+                            
+                        }
+                       
+                    });
+
+                }
+            },
+                    (input, _) =>
+                        {
+                if (input != null)
+                        {
+                                
+                                    _picker.SelectAsset(asset);
+                                    _picker.NotifyAssetSelected(asset);
+                                    ConfigureSelectCellAccessibilityAttributes(cell, true, null);
+                                
+                        }
+                        else
+                      {
+                    UIAlertView alertView = new UIAlertView{
+                        Title = "No Connection",
+                        Message = "No Connection"
+                    };
+                                alertView.AddButton("OK");
+                                alertView.Show();
+                        cell.Selected = false; 
+                    cell._selectedButton.Hidden = true;
+                        }
+                    });
+			
+			
+			
+			
+			
+			//_picker.SelectAsset(asset);
+			//_picker.NotifyAssetSelected(asset);
+			//ConfigureSelectCellAccessibilityAttributes(cell, true, null);
 		}
 
 		public override bool ShouldDeselectItem(UICollectionView collectionView, NSIndexPath indexPath)
